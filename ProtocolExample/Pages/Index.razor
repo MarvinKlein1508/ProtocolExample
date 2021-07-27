@@ -1,6 +1,60 @@
 ﻿@page "/"
-
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
 <h1>Hello, world!</h1>
 
-<a href="mailto:demo@asdf.com">Mailto</a>
-<a href="tic:message?type=email&to=demo@asdf.com">Custom thirdparty protocoll</a>
+<a class="btn btn-primary" href="mailto:demo@asdf.com">Mailto (href version)</a>
+<br />
+<br />
+<button class="btn btn-primary" @onclick="async () => await MailToAsync(false)">Mailto (navigationManager version)</button>
+<br />
+<br />
+<button class="btn btn-primary" @onclick="async () => await MailToAsync(true)">Mailto (navigationManager newTab version)</button>
+<br />
+<br />
+<a class="btn btn-primary" href="myprotocoll:test">Custom protocoll (href version)</a>
+<br />
+<br />
+<button class="btn btn-primary" @onclick="async () => await CustomProtocollAsync(false)">Custom protocoll (navigationManager version)</button>
+<br />
+<br />
+<button class="btn btn-primary" @onclick="async () => await CustomProtocollAsync(true)">Custom protocoll (navigationManager new tab version)</button>
+<br />
+<br />
+
+@code
+{
+    private async Task MailToAsync(bool newTab = false)
+    {
+        // Simulate data access
+        await Task.Delay(1000);
+
+        // In our real application we need to load fresh data for a customer to get his latest email address. That's why we use a custom method instead of a direct mailto:
+        if (newTab)
+        {
+            await jsRuntime.InvokeVoidAsync($"window.open", new object[] { "mailto:demo@asdf.com", "_blank" });
+        }
+        else
+        {
+            navigationManager.NavigateTo("mailto:demo@asdf.com");
+        }
+
+    }
+
+    private async Task CustomProtocollAsync(bool newTab = false)
+    {
+        // Simulate data access
+        await Task.Delay(1000);
+
+        // In our real application we need to load fresh data for a customer to get his latest email address. That's why we use a custom method instead of a direct mailto:
+        if (newTab)
+        {
+            await jsRuntime.InvokeVoidAsync($"window.open", new object[] { "myprotocoll:test2", "_blank" });
+        }
+        else
+        {
+            navigationManager.NavigateTo("myprotocoll:test2");
+        }
+
+    }
+}
